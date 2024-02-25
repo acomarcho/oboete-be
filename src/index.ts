@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 import { PostgreSqlUserDataAccess } from "./user/data-access/postgresql";
 import { RegisterUseCase } from "./user/use-case/register";
 import { UserController } from "./user/controller";
+import logger from "pino-http";
 
 dotenv.config();
 
 const app: Express = express();
 app.use(express.json());
+app.use(logger());
 
 const port = process.env.PORT || 3000;
 
