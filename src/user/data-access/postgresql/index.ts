@@ -29,7 +29,7 @@ export class PostgreSqlUserDataAccess implements UserDataAccessInterface {
     } catch {
       await client.query("ROLLBACK");
     } finally {
-      await client.release();
+      client.release();
     }
 
     return user;
