@@ -14,7 +14,7 @@ export class UserController {
 
     this.router = express.Router();
 
-    this.router.post("/", async (req, res) => {
+    this.router.post("/register", async (req, res) => {
       try {
         const { value: registerBody, error } = registerSchema.validate(
           req.body
