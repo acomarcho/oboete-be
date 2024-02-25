@@ -8,6 +8,6 @@ export type RegisterRequest = {
 
 export const registerSchema = Joi.object<RegisterRequest>({
   username: Joi.string().required(),
-  email: Joi.string().required(),
+  email: Joi.string().email().required(),
   password: Joi.string().required(),
 });
