@@ -34,7 +34,7 @@ export class RegisterUseCase {
 
     const hashedPassword = await bcrypt.hash(
       password,
-      process.env.HASH_ROUNDS || 12
+      process.env.HASH_ROUNDS ? parseInt(process.env.HASH_ROUNDS) : 12
     );
 
     const registeredUser = await this.userDataAccess.insertUser(
