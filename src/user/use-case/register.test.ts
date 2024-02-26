@@ -1,83 +1,83 @@
+import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../../lib/error/http-error";
+import { UserDataAccessInterface } from "../data-access-interface";
+import { MockUserDataAccess } from "../data-access/mock";
 import { UserEntity } from "../entity";
 import { RegisterUseCase } from "./register";
-import { StatusCodes } from "http-status-codes";
-import { MockUserDataAccess } from "../data-access/mock";
-import { UserDataAccessInterface } from "../data-access-interface";
 
 class MockRegisterUserDataAccess extends MockUserDataAccess {
-  async insertUser(user: UserEntity): Promise<UserEntity> {
-    return user;
-  }
+	async insertUser(user: UserEntity): Promise<UserEntity> {
+		return user;
+	}
 
-  async getUserByUsername(username: string): Promise<UserEntity | null> {
-    if (username === "mock") {
-      return new UserEntity({
-        username: "mock",
-        email: "mock@mock.com",
-        hashedPassword: "mock",
-      });
-    }
+	async getUserByUsername(username: string): Promise<UserEntity | null> {
+		if (username === "mock") {
+			return new UserEntity({
+				username: "mock",
+				email: "mock@mock.com",
+				hashedPassword: "mock",
+			});
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  async getUserByEmail(email: string): Promise<UserEntity | null> {
-    if (email === "mock@mock.com") {
-      return new UserEntity({
-        username: "mock",
-        email: "mock@mock.com",
-        hashedPassword: "mock",
-      });
-    }
+	async getUserByEmail(email: string): Promise<UserEntity | null> {
+		if (email === "mock@mock.com") {
+			return new UserEntity({
+				username: "mock",
+				email: "mock@mock.com",
+				hashedPassword: "mock",
+			});
+		}
 
-    return null;
-  }
+		return null;
+	}
 }
 
 let mockUserDataAccess: UserDataAccessInterface;
 let registerUseCase: RegisterUseCase;
 
 beforeAll(() => {
-  mockUserDataAccess = new MockRegisterUserDataAccess();
-  registerUseCase = new RegisterUseCase(mockUserDataAccess);
+	mockUserDataAccess = new MockRegisterUserDataAccess();
+	registerUseCase = new RegisterUseCase(mockUserDataAccess);
 });
 
 test("should fail because username is already taken", () => {
-  expect(
-    async () =>
-      await registerUseCase.execute({
-        username: "mock",
-        email: "dumdum@gmail.com",
-        password: "12345678",
-      })
-  ).rejects.toThrow(
-    new HttpError(StatusCodes.BAD_REQUEST, "Username already taken!")
-  );
+	expect(
+		async () =>
+			await registerUseCase.execute({
+				username: "mock",
+				email: "dumdum@gmail.com",
+				password: "12345678",
+			}),
+	).rejects.toThrow(
+		new HttpError(StatusCodes.BAD_REQUEST, "Username already taken!"),
+	);
 });
 
 test("should fail because email is already taken", () => {
-  expect(
-    async () =>
-      await registerUseCase.execute({
-        username: "dumdum",
-        email: "mock@mock.com",
-        password: "12345678",
-      })
-  ).rejects.toThrow(
-    new HttpError(StatusCodes.BAD_REQUEST, "Email already taken!")
-  );
+	expect(
+		async () =>
+			await registerUseCase.execute({
+				username: "dumdum",
+				email: "mock@mock.com",
+				password: "12345678",
+			}),
+	).rejects.toThrow(
+		new HttpError(StatusCodes.BAD_REQUEST, "Email already taken!"),
+	);
 });
 
 test("should successfully register user", async () => {
-  const registeredUser = await registerUseCase.execute({
-    username: "dumdum",
-    email: "dumdum@gmail.com",
-    password: "12345678",
-  });
+	const registeredUser = await registerUseCase.execute({
+		username: "dumdum",
+		email: "dumdum@gmail.com",
+		password: "12345678",
+	});
 
-  expect(registeredUser).toMatchObject({
-    username: "dumdum",
-    email: "dumdum@gmail.com",
-  });
+	expect(registeredUser).toMatchObject({
+		username: "dumdum",
+		email: "dumdum@gmail.com",
+	});
 });

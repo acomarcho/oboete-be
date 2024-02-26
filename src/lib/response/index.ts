@@ -1,16 +1,16 @@
 export class HttpResponse<T> {
-  private data: T;
-  private error: any;
+	private data: T;
+	private error: Error | null;
 
-  constructor(data: T, error: any = null) {
-    this.data = data;
-    this.error = error;
-  }
+	constructor(data: T, error: Error | null = null) {
+		this.data = data;
+		this.error = error;
+	}
 
-  toJson() {
-    return {
-      data: this.data,
-      error: this.error,
-    };
-  }
+	toJson() {
+		return {
+			data: this.data,
+			error: this.error,
+		};
+	}
 }
