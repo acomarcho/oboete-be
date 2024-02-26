@@ -1,18 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../../lib/error/http-error";
 import { UserDataAccessInterface } from "../data-access-interface";
+import { MockUserDataAccess } from "../data-access/mock";
 import { UserEntity } from "../entity";
 import { LoginUseCase } from "./login";
 
-class MockUserDataAccess implements UserDataAccessInterface {
-  async insertUser(user: UserEntity): Promise<UserEntity> {
-    return new UserEntity({
-      username: "mock",
-      email: "mock@mock.com",
-      hashedPassword: "mock",
-    });
-  }
-
+class MockLoginUserDataAccess extends MockUserDataAccess {
   async getUserByUsername(username: string): Promise<UserEntity | null> {
     if (username === "mock") {
       return new UserEntity({
@@ -43,7 +36,7 @@ let userDataAccess: UserDataAccessInterface;
 let loginUseCase: LoginUseCase;
 
 beforeAll(() => {
-  userDataAccess = new MockUserDataAccess();
+  userDataAccess = new MockLoginUserDataAccess();
   loginUseCase = new LoginUseCase(userDataAccess);
 });
 

@@ -1,10 +1,11 @@
 import { HttpError } from "../../lib/error/http-error";
-import { UserDataAccessInterface } from "../data-access-interface";
 import { UserEntity } from "../entity";
 import { RegisterUseCase } from "./register";
 import { StatusCodes } from "http-status-codes";
+import { MockUserDataAccess } from "../data-access/mock";
+import { UserDataAccessInterface } from "../data-access-interface";
 
-class MockUserDataAccess implements UserDataAccessInterface {
+class MockRegisterUserDataAccess extends MockUserDataAccess {
   async insertUser(user: UserEntity): Promise<UserEntity> {
     return user;
   }
@@ -34,11 +35,11 @@ class MockUserDataAccess implements UserDataAccessInterface {
   }
 }
 
-let mockUserDataAccess: MockUserDataAccess;
+let mockUserDataAccess: UserDataAccessInterface;
 let registerUseCase: RegisterUseCase;
 
 beforeAll(() => {
-  mockUserDataAccess = new MockUserDataAccess();
+  mockUserDataAccess = new MockRegisterUserDataAccess();
   registerUseCase = new RegisterUseCase(mockUserDataAccess);
 });
 
