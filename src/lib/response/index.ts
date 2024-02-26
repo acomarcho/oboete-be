@@ -10,7 +10,7 @@ export class HttpResponse<T> {
 	toJson() {
 		return {
 			data: this.data,
-			error: this.error,
+			error: this.error?.message,
 		};
 	}
 }

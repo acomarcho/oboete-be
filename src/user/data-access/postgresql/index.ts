@@ -35,6 +35,35 @@ export class PostgreSqlUserDataAccess implements UserDataAccessInterface {
 		return user;
 	}
 
+	public async getUserById(id: string): Promise<UserEntity | null> {
+		const pool = await this.database.getPool();
+		const result = await pool.query<UserModel>(
+			`SELECT
+          u.id,
+          u.username,
+          u.email,
+          u.password
+        FROM
+          users u
+        WHERE
+          u.id = $1`,
+			[id],
+		);
+
+		if (result.rowCount === 0) {
+			return null;
+		}
+
+		const userModel = result.rows[0];
+
+		return new UserEntity({
+			id: userModel.id,
+			username: userModel.username,
+			email: userModel.email,
+			hashedPassword: userModel.password,
+		});
+	}
+
 	public async getUserByUsername(username: string): Promise<UserEntity | null> {
 		const pool = await this.database.getPool();
 		const result = await pool.query<UserModel>(

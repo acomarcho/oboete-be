@@ -41,13 +41,21 @@ export class UserController {
 				);
 			} catch (error) {
 				if (error instanceof HttpError) {
+					console.log(error);
 					return res
 						.status(error.getStatusCode())
-						.json(new HttpResponse(null, error.getMessage()).toJson());
+						.json(
+							new HttpResponse(null, new Error(error.getMessage())).toJson(),
+						);
+				}
+				if (error instanceof Error) {
+					return res
+						.status(StatusCodes.INTERNAL_SERVER_ERROR)
+						.json(new HttpResponse(null, new Error(error.message)).toJson());
 				}
 				return res
 					.status(StatusCodes.INTERNAL_SERVER_ERROR)
-					.json(new HttpResponse(null, error));
+					.json(new HttpResponse(null, new Error("Internal server error")));
 			}
 		});
 	}
