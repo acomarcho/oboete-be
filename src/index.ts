@@ -1,3 +1,4 @@
+import cors from "cors";
 import dotenv from "dotenv";
 import express, { Express } from "express";
 import logger from "pino-http";
@@ -10,6 +11,7 @@ dotenv.config();
 const app: Express = express();
 app.use(express.json());
 app.use(logger());
+app.use(cors());
 
 const port = process.env.PORT || 3000;
 
