@@ -81,6 +81,9 @@ export class UserController {
 					password: password,
 				});
 
+				res.cookie("refresh-token", tokenData.refreshToken, { httpOnly: true });
+				res.cookie("access-token", tokenData.accessToken, { httpOnly: true });
+
 				return res.status(StatusCodes.OK).json(
 					new HttpResponse({
 						refreshToken: tokenData.refreshToken,
