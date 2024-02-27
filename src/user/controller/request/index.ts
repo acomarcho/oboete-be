@@ -11,3 +11,13 @@ export const registerSchema = Joi.object<RegisterRequest>({
 	email: Joi.string().email().required(),
 	password: Joi.string().required(),
 });
+
+export type LoginRequest = {
+	usernameOrEmail: string;
+	password: string;
+};
+
+export const loginSchema = Joi.object<LoginRequest>({
+	usernameOrEmail: Joi.string().required(),
+	password: Joi.string().required(),
+});

@@ -4,6 +4,7 @@ import express, { Express } from "express";
 import logger from "pino-http";
 import { UserController } from "./user/controller";
 import { PostgreSqlUserDataAccess } from "./user/data-access/postgresql";
+import { LoginUseCase } from "./user/use-case/login";
 import { RegisterUseCase } from "./user/use-case/register";
 
 dotenv.config();
@@ -17,8 +18,10 @@ const port = process.env.PORT || 3000;
 
 const postgreSqlUserDataAccess = new PostgreSqlUserDataAccess();
 const registerUseCase = new RegisterUseCase(postgreSqlUserDataAccess);
+const loginUseCase = new LoginUseCase(postgreSqlUserDataAccess);
 const userController = new UserController({
 	registerUseCase,
+	loginUseCase,
 });
 app.use("/user", userController.getRouter());
 
