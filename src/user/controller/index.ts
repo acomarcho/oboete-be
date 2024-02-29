@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../../lib/error/http-error";
 import { HttpResponse } from "../../lib/response";
 import isAuthenticated from "../../middleware/auth";
+import { RequestWithUserId } from "../../types/express";
 import { LoginUseCase } from "../use-case/login";
 import { LogOutUseCase } from "../use-case/logout";
 import { RegisterUseCase } from "../use-case/register";
@@ -90,10 +91,10 @@ export class UserController {
 					password: password,
 				});
 
-				res.cookie("refresh-token", loginData.tokens.refreshToken, {
+				res.cookie("refreshToken", loginData.tokens.refreshToken, {
 					httpOnly: true,
 				});
-				res.cookie("access-token", loginData.tokens.accessToken, {
+				res.cookie("accessToken", loginData.tokens.accessToken, {
 					httpOnly: true,
 				});
 
@@ -132,48 +133,55 @@ export class UserController {
 			}
 		});
 
-		this.router.post("/logout", isAuthenticated, async (req, res) => {
-			try {
-				if (!req.userId) {
-					throw new HttpError(
-						StatusCodes.UNAUTHORIZED,
-						"You are not authenticated, cannot log out.",
-					);
-				}
-
-				const success = await this.logoutUseCase.execute({
-					userId: req.userId,
-				});
-
-				res.clearCookie("accessToken");
-				res.clearCookie("refreshToken");
-
-				return res.status(StatusCodes.OK).json(
-					new HttpResponse({
-						success,
-					}).toJson(),
-				);
-			} catch (error) {
-				if (error instanceof HttpError) {
-					console.log(error);
-					return res
-						.status(error.getStatusCode())
-						.json(
-							new HttpResponse(null, new Error(error.getMessage())).toJson(),
+		this.router.post(
+			"/logout",
+			isAuthenticated,
+			async (req: RequestWithUserId, res) => {
+				try {
+					if (!req.userId) {
+						throw new HttpError(
+							StatusCodes.UNAUTHORIZED,
+							"You are not authenticated, cannot log out.",
 						);
-				}
-				if (error instanceof Error) {
+					}
+
+					const success = await this.logoutUseCase.execute({
+						userId: req.userId,
+					});
+
+					res.clearCookie("accessToken");
+					res.clearCookie("refreshToken");
+
+					return res.status(StatusCodes.OK).json(
+						new HttpResponse({
+							success,
+						}).toJson(),
+					);
+				} catch (error) {
+					if (error instanceof HttpError) {
+						console.log(error);
+						return res
+							.status(error.getStatusCode())
+							.json(
+								new HttpResponse(null, new Error(error.getMessage())).toJson(),
+							);
+					}
+					if (error instanceof Error) {
+						return res
+							.status(StatusCodes.INTERNAL_SERVER_ERROR)
+							.json(new HttpResponse(null, new Error(error.message)).toJson());
+					}
 					return res
 						.status(StatusCodes.INTERNAL_SERVER_ERROR)
-						.json(new HttpResponse(null, new Error(error.message)).toJson());
+						.json(
+							new HttpResponse(
+								null,
+								new Error("Internal server error"),
+							).toJson(),
+						);
 				}
-				return res
-					.status(StatusCodes.INTERNAL_SERVER_ERROR)
-					.json(
-						new HttpResponse(null, new Error("Internal server error")).toJson(),
-					);
-			}
-		});
+			},
+		);
 	}
 
 	getRouter() {

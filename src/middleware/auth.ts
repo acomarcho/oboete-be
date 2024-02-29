@@ -3,9 +3,10 @@ import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
 import { HttpResponse } from "../lib/response";
+import { RequestWithUserId } from "../types/express";
 
 const isAuthenticated = (
-	req: express.Request,
+	req: RequestWithUserId,
 	res: express.Response,
 	next: express.NextFunction,
 ) => {
@@ -26,11 +27,11 @@ const isAuthenticated = (
 		};
 		const tokenSchema = Joi.object<jwtToken>({
 			userId: Joi.string().required(),
-		});
+		}).unknown(true);
 		const { value: parsedToken, error } = tokenSchema.validate(decodedToken);
 
 		if (error) {
-			throw new Error("Invalid refresh token!");
+			throw new Error("Invalid access token!");
 		}
 
 		req.userId = parsedToken.userId;

@@ -23,7 +23,7 @@ export class RefreshTokenUseCase {
 			};
 			const tokenSchema = Joi.object<jwtToken>({
 				userId: Joi.string().required(),
-			});
+			}).unknown(true);
 			const { value: parsedToken, error } = tokenSchema.validate(decodedToken);
 
 			if (error) {
