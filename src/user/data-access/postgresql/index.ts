@@ -26,8 +26,9 @@ export class PostgreSqlUserDataAccess implements UserDataAccessInterface {
 			);
 
 			await client.query("COMMIT");
-		} catch {
+		} catch (error) {
 			await client.query("ROLLBACK");
+			throw error;
 		} finally {
 			client.release();
 		}
@@ -120,5 +121,81 @@ export class PostgreSqlUserDataAccess implements UserDataAccessInterface {
 			email: userModel.email,
 			hashedPassword: userModel.password,
 		});
+	}
+
+	public async upsertUserToken(userId: string, token: string): Promise<string> {
+		const client = await this.database.getClient();
+		try {
+			await client.query("BEGIN");
+
+			const userTokenQueryResult = await client.query(
+				`
+				SELECT
+					ut.id
+				FROM
+					user_tokens ut
+				WHERE
+					ut.user_id = $1
+			`,
+				[userId],
+			);
+
+			if (userTokenQueryResult.rowCount === 0) {
+				await client.query(
+					`
+					INSERT INTO
+						user_tokens (user_id, token)
+					VALUES
+						($1, $2)
+				`,
+					[userId, token],
+				);
+			} else {
+				await client.query(
+					`UPDATE
+						user_tokens
+					SET
+						token = $1
+					WHERE
+						user_id = $2`,
+					[token, userId],
+				);
+			}
+
+			await client.query("COMMIT");
+		} catch (error) {
+			await client.query("ROLLBACK");
+			throw error;
+		} finally {
+			client.release();
+		}
+
+		return token;
+	}
+
+	public async deleteUserToken(userId: string): Promise<boolean> {
+		const client = await this.database.getClient();
+		try {
+			await client.query("BEGIN");
+
+			await client.query(
+				`
+				DELETE FROM
+					user_tokens
+				WHERE
+					user_id = $1
+			`,
+				[userId],
+			);
+
+			await client.query("COMMIT");
+		} catch (error) {
+			await client.query("ROLLBACK");
+			throw error;
+		} finally {
+			client.release();
+		}
+
+		return true;
 	}
 }

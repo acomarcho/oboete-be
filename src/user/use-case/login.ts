@@ -56,6 +56,8 @@ export class LoginUseCase {
 			},
 		);
 
+		await this.userDataAccess.upsertUserToken(user.getId(), refreshToken);
+
 		return {
 			refreshToken,
 			accessToken,

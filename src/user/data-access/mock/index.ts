@@ -14,4 +14,10 @@ export class MockUserDataAccess implements UserDataAccessInterface {
 	getUserByEmail(email: string): Promise<UserEntity | null> {
 		throw new Error("Method not implemented.");
 	}
+	upsertUserToken(userId: string, token: string): Promise<string> {
+		throw new Error("Method not implemented.");
+	}
+	deleteUserToken(userId: string): Promise<boolean> {
+		throw new Error("Method not implemented.");
+	}
 }
