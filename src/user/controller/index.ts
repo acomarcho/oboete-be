@@ -6,6 +6,7 @@ import isAuthenticated from "../../middleware/auth";
 import { RequestWithUserId } from "../../types/express";
 import { LoginUseCase } from "../use-case/login";
 import { LogOutUseCase } from "../use-case/logout";
+import { RefreshTokenUseCase } from "../use-case/refresh-token";
 import { RegisterUseCase } from "../use-case/register";
 import { loginSchema, registerSchema } from "./request";
 
@@ -14,19 +15,23 @@ export class UserController {
 	private registerUseCase;
 	private loginUseCase;
 	private logoutUseCase;
+	private refreshTokenUseCase;
 
 	constructor({
 		registerUseCase,
 		loginUseCase,
 		logoutUseCase,
+		refreshTokenUseCase,
 	}: {
 		registerUseCase: RegisterUseCase;
 		loginUseCase: LoginUseCase;
 		logoutUseCase: LogOutUseCase;
+		refreshTokenUseCase: RefreshTokenUseCase;
 	}) {
 		this.registerUseCase = registerUseCase;
 		this.loginUseCase = loginUseCase;
 		this.logoutUseCase = logoutUseCase;
+		this.refreshTokenUseCase = refreshTokenUseCase;
 
 		this.router = express.Router();
 
@@ -182,6 +187,48 @@ export class UserController {
 				}
 			},
 		);
+
+		this.router.post("/refresh", async (req, res) => {
+			try {
+				if (!req.cookies.refreshToken) {
+					throw new HttpError(
+						StatusCodes.UNAUTHORIZED,
+						"Invalid refresh token",
+					);
+				}
+
+				const token = await this.refreshTokenUseCase.execute({
+					refreshToken: req.cookies.refreshToken,
+				});
+
+				res.cookie("accessToken", token.accessToken, { httpOnly: true });
+
+				return res.status(StatusCodes.OK).json(
+					new HttpResponse({
+						accessToken: token.accessToken,
+					}).toJson(),
+				);
+			} catch (error) {
+				if (error instanceof HttpError) {
+					console.log(error);
+					return res
+						.status(error.getStatusCode())
+						.json(
+							new HttpResponse(null, new Error(error.getMessage())).toJson(),
+						);
+				}
+				if (error instanceof Error) {
+					return res
+						.status(StatusCodes.INTERNAL_SERVER_ERROR)
+						.json(new HttpResponse(null, new Error(error.message)).toJson());
+				}
+				return res
+					.status(StatusCodes.INTERNAL_SERVER_ERROR)
+					.json(
+						new HttpResponse(null, new Error("Internal server error")).toJson(),
+					);
+			}
+		});
 	}
 
 	getRouter() {

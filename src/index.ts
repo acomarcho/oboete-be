@@ -8,6 +8,7 @@ import { UserController } from "./user/controller";
 import { PostgreSqlUserDataAccess } from "./user/data-access/postgresql";
 import { LoginUseCase } from "./user/use-case/login";
 import { LogOutUseCase } from "./user/use-case/logout";
+import { RefreshTokenUseCase } from "./user/use-case/refresh-token";
 import { RegisterUseCase } from "./user/use-case/register";
 
 dotenv.config();
@@ -29,10 +30,12 @@ const postgreSqlUserDataAccess = new PostgreSqlUserDataAccess();
 const registerUseCase = new RegisterUseCase(postgreSqlUserDataAccess);
 const loginUseCase = new LoginUseCase(postgreSqlUserDataAccess);
 const logoutUseCase = new LogOutUseCase(postgreSqlUserDataAccess);
+const refreshTokenUseCase = new RefreshTokenUseCase(postgreSqlUserDataAccess);
 const userController = new UserController({
 	registerUseCase,
 	loginUseCase,
 	logoutUseCase,
+	refreshTokenUseCase,
 });
 app.use("/user", userController.getRouter());
 

@@ -49,7 +49,6 @@ export class LoginUseCase {
 		const accessToken = await jwt.sign(
 			{
 				userId: user.getId(),
-				username: user.getUsername(),
 			},
 			process.env.ACCESS_SECRET || "secret",
 			{
