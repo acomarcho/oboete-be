@@ -35,6 +35,13 @@ export class RefreshTokenUseCase {
 				throw new Error("Invalid refresh token!");
 			}
 
+			const userToken = await this.userDataAccess.getUserTokenByUserId(
+				user.getId(),
+			);
+			if (refreshToken !== userToken) {
+				throw new Error("Invalid refresh token!");
+			}
+
 			const accessToken = await jwt.sign(
 				{
 					userId: user.getId(),

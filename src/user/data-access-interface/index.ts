@@ -7,4 +7,5 @@ export interface UserDataAccessInterface {
 	getUserByEmail(email: string): Promise<UserEntity | null>;
 	upsertUserToken(userId: string, token: string): Promise<string>;
 	deleteUserToken(userId: string): Promise<boolean>;
+	getUserTokenByUserId(userId: string): Promise<string>;
 }

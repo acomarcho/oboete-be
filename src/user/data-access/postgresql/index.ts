@@ -198,4 +198,25 @@ export class PostgreSqlUserDataAccess implements UserDataAccessInterface {
 
 		return true;
 	}
+
+	public async getUserTokenByUserId(userId: string): Promise<string> {
+		const pool = await this.database.getPool();
+		const result = await pool.query<{ token: string }>(
+			`SELECT
+          ut.token
+        FROM
+          user_tokens ut
+        WHERE
+          ut.user_id = $1`,
+			[userId],
+		);
+
+		if (result.rowCount === 0) {
+			return "";
+		}
+
+		const resultRow = result.rows[0];
+
+		return resultRow.token;
+	}
 }

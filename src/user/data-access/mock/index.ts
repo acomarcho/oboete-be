@@ -2,6 +2,9 @@ import { UserDataAccessInterface } from "../../data-access-interface";
 import { UserEntity } from "../../entity";
 
 export class MockUserDataAccess implements UserDataAccessInterface {
+	getUserTokenByUserId(userId: string): Promise<string> {
+		throw new Error("Method not implemented.");
+	}
 	getUserById(id: string): Promise<UserEntity | null> {
 		throw new Error("Method not implemented.");
 	}
