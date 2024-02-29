@@ -60,8 +60,15 @@ export class LoginUseCase {
 		await this.userDataAccess.upsertUserToken(user.getId(), refreshToken);
 
 		return {
-			refreshToken,
-			accessToken,
+			tokens: {
+				refreshToken,
+				accessToken,
+			},
+			user: {
+				id: user.getId(),
+				username: user.getUsername(),
+				email: user.getEmail(),
+			},
 		};
 	}
 }

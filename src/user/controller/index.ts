@@ -76,18 +76,29 @@ export class UserController {
 				}
 
 				const { usernameOrEmail, password } = loginBody;
-				const tokenData = await this.loginUseCase.execute({
+				const loginData = await this.loginUseCase.execute({
 					usernameOrEmail: usernameOrEmail,
 					password: password,
 				});
 
-				res.cookie("refresh-token", tokenData.refreshToken, { httpOnly: true });
-				res.cookie("access-token", tokenData.accessToken, { httpOnly: true });
+				res.cookie("refresh-token", loginData.tokens.refreshToken, {
+					httpOnly: true,
+				});
+				res.cookie("access-token", loginData.tokens.accessToken, {
+					httpOnly: true,
+				});
 
 				return res.status(StatusCodes.OK).json(
 					new HttpResponse({
-						refreshToken: tokenData.refreshToken,
-						accessToken: tokenData.accessToken,
+						tokens: {
+							refreshToken: loginData.tokens.refreshToken,
+							accessToken: loginData.tokens.accessToken,
+						},
+						user: {
+							id: loginData.user.id,
+							username: loginData.user.username,
+							email: loginData.user.email,
+						},
 					}).toJson(),
 				);
 			} catch (error) {
