@@ -3,7 +3,6 @@ import { HttpError } from "../../lib/error/http-error";
 import { UserDataAccessInterface } from "../data-access-interface";
 import { MockUserDataAccess } from "../data-access/mock";
 import { UserEntity } from "../entity";
-import { LoginUseCase } from "./login";
 import { LogOutUseCase } from "./logout";
 
 class MockLoginUserDataAccess extends MockUserDataAccess {
