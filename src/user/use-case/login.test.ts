@@ -71,5 +71,6 @@ test("should successfully log in", async () => {
 		password: "mock",
 	});
 
-	expect(res).toHaveProperty("refreshToken");
+	expect(res).toHaveProperty("tokens");
+	expect(res).toHaveProperty("user");
 });

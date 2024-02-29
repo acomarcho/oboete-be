@@ -27,19 +27,19 @@ export class RefreshTokenUseCase {
 			const { value: parsedToken, error } = tokenSchema.validate(decodedToken);
 
 			if (error) {
-				throw new Error("Invalid refresh token!");
+				throw new HttpError(StatusCodes.UNAUTHORIZED, "Invalid refresh token!");
 			}
 
 			const user = await this.userDataAccess.getUserById(parsedToken.userId);
 			if (!user) {
-				throw new Error("Invalid refresh token!");
+				throw new HttpError(StatusCodes.UNAUTHORIZED, "Invalid refresh token!");
 			}
 
 			const userToken = await this.userDataAccess.getUserTokenByUserId(
 				user.getId(),
 			);
 			if (refreshToken !== userToken) {
-				throw new Error("Invalid refresh token!");
+				throw new HttpError(StatusCodes.UNAUTHORIZED, "Invalid refresh token!");
 			}
 
 			const accessToken = await jwt.sign(
