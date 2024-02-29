@@ -30,6 +30,9 @@ class MockLoginUserDataAccess extends MockUserDataAccess {
 
 		return null;
 	}
+	async upsertUserToken(userId: string, token: string): Promise<string> {
+		return "sample token";
+	}
 }
 
 let userDataAccess: UserDataAccessInterface;
