@@ -1,19 +1,21 @@
 import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
-import jwt from "jsonwebtoken";
 import { HttpError } from "../../lib/error/http-error";
+import { JwtInterface } from "../../lib/jwt";
 import { UserDataAccessInterface } from "../data-access-interface";
 
 export class RefreshTokenUseCase {
 	private userDataAccess: UserDataAccessInterface;
+	private jwt: JwtInterface;
 
-	constructor(userDataAccess: UserDataAccessInterface) {
+	constructor(userDataAccess: UserDataAccessInterface, jwt: JwtInterface) {
 		this.userDataAccess = userDataAccess;
+		this.jwt = jwt;
 	}
 
 	async execute({ refreshToken }: { refreshToken: string }) {
 		try {
-			const decodedToken = jwt.verify(
+			const decodedToken = this.jwt.verify(
 				refreshToken,
 				process.env.REFRESH_SECRET || "secret",
 			);
@@ -42,7 +44,7 @@ export class RefreshTokenUseCase {
 				throw new HttpError(StatusCodes.UNAUTHORIZED, "Invalid refresh token!");
 			}
 
-			const accessToken = await jwt.sign(
+			const accessToken = this.jwt.sign(
 				{
 					userId: user.getId(),
 				},
@@ -55,7 +57,7 @@ export class RefreshTokenUseCase {
 			return {
 				accessToken,
 			};
-		} catch {
+		} catch (error) {
 			throw new HttpError(StatusCodes.UNAUTHORIZED, "Invalid refresh token!");
 		}
 	}

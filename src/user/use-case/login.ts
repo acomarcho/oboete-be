@@ -1,14 +1,16 @@
 import bcrypt from "bcrypt";
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
 import { HttpError } from "../../lib/error/http-error";
+import { JwtInterface } from "../../lib/jwt";
 import { UserDataAccessInterface } from "../data-access-interface";
 
 export class LoginUseCase {
 	private userDataAccess: UserDataAccessInterface;
+	private jwt: JwtInterface;
 
-	constructor(userDataAccess: UserDataAccessInterface) {
+	constructor(userDataAccess: UserDataAccessInterface, jwt: JwtInterface) {
 		this.userDataAccess = userDataAccess;
+		this.jwt = jwt;
 	}
 
 	async execute({
@@ -37,7 +39,7 @@ export class LoginUseCase {
 			throw new HttpError(StatusCodes.BAD_REQUEST, "Invalid credentials!");
 		}
 
-		const refreshToken = await jwt.sign(
+		const refreshToken = this.jwt.sign(
 			{
 				userId: user.getId(),
 			},
@@ -46,7 +48,7 @@ export class LoginUseCase {
 				expiresIn: "30d",
 			},
 		);
-		const accessToken = await jwt.sign(
+		const accessToken = this.jwt.sign(
 			{
 				userId: user.getId(),
 			},

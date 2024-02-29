@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../../lib/error/http-error";
+import { Jwt } from "../../lib/jwt";
 import { UserDataAccessInterface } from "../data-access-interface";
 import { MockUserDataAccess } from "../data-access/mock";
 import { UserEntity } from "../entity";
@@ -40,7 +41,7 @@ let loginUseCase: LoginUseCase;
 
 beforeAll(() => {
 	userDataAccess = new MockLoginUserDataAccess();
-	loginUseCase = new LoginUseCase(userDataAccess);
+	loginUseCase = new LoginUseCase(userDataAccess, new Jwt());
 });
 
 test("should throw invalid credentials because of invalid usernameOrEmail", () => {
