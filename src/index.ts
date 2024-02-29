@@ -7,6 +7,7 @@ import { allowedOrigins } from "./lib/constant/origin";
 import { UserController } from "./user/controller";
 import { PostgreSqlUserDataAccess } from "./user/data-access/postgresql";
 import { LoginUseCase } from "./user/use-case/login";
+import { LogOutUseCase } from "./user/use-case/logout";
 import { RegisterUseCase } from "./user/use-case/register";
 
 dotenv.config();
@@ -27,9 +28,11 @@ const port = process.env.PORT || 3000;
 const postgreSqlUserDataAccess = new PostgreSqlUserDataAccess();
 const registerUseCase = new RegisterUseCase(postgreSqlUserDataAccess);
 const loginUseCase = new LoginUseCase(postgreSqlUserDataAccess);
+const logoutUseCase = new LogOutUseCase(postgreSqlUserDataAccess);
 const userController = new UserController({
 	registerUseCase,
 	loginUseCase,
+	logoutUseCase,
 });
 app.use("/user", userController.getRouter());
 
