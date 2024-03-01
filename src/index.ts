@@ -49,9 +49,10 @@ const userController = new UserController({
 app.use("/user", userController.getRouter());
 
 const postgreSqlUserCardDataAccess = new PostgreSqlUserCardDataAccess();
-const createUserCardUseCase = new CreateUserCardUseCase(
-	postgreSqlUserCardDataAccess,
-);
+const createUserCardUseCase = new CreateUserCardUseCase({
+	userCardDataAccess: postgreSqlUserCardDataAccess,
+	userDataAccess: postgreSqlUserDataAccess,
+});
 const userCardController = new UserCardController({
 	createUserCardUseCase,
 });
