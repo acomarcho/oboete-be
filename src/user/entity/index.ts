@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 
 export class UserEntity {
-	private id;
-	private username;
-	private email;
-	private hashedPassword;
+	private id: string;
+	private username: string;
+	private email: string;
+	private hashedPassword: string;
 
 	constructor({
 		id = uuidv4(),
