@@ -29,7 +29,7 @@ export class CreateUserCardUseCase {
 	}) {
 		const user = await this.userDataAccess.getUserById(userId);
 		if (user === null) {
-			throw new HttpError(StatusCodes.UNAUTHORIZED, "User ID not found");
+			throw new HttpError(StatusCodes.UNAUTHORIZED, "User not found");
 		}
 
 		const insertedUserCard = await this.userCardDataAccess.insertUserCard(
