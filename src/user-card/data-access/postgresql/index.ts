@@ -12,11 +12,6 @@ export class PostgreSqlUserCardDataAccess
 		try {
 			await client.query("BEGIN");
 
-			const _lastReviewedAt = userCard.getLastReviewedAt();
-			const lastReviewedAt = _lastReviewedAt
-				? _lastReviewedAt.toISOString()
-				: null;
-
 			await client.query(
 				`INSERT
           INTO user_cards
@@ -28,9 +23,9 @@ export class PostgreSqlUserCardDataAccess
 					userCard.getUserId(),
 					userCard.getContent(),
 					userCard.getStatus(),
-					lastReviewedAt,
-					userCard.getCreatedAt().toISOString(),
-					userCard.getUpdatedAt().toISOString(),
+					userCard.getLastReviewedAt(),
+					userCard.getCreatedAt(),
+					userCard.getUpdatedAt(),
 				],
 			);
 
