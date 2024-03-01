@@ -22,7 +22,7 @@ export class PostgreSqlUserCardDataAccess
           INTO user_cards
             (id, user_id, content, status, last_reviewed_at, created_at, updated_at)
           VALUES
-            ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            ($1, $2, $3, $4, $5, $6, $7)`,
 				[
 					userCard.getId(),
 					userCard.getUserId(),
