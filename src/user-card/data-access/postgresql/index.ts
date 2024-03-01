@@ -1,6 +1,11 @@
+import moment from "moment";
 import { postgreSqlDatabase } from "../../../lib/postgresql";
-import { UserCardDataAccessInterface } from "../../data-access-interface";
+import {
+	GetUserCardsFilter,
+	UserCardDataAccessInterface,
+} from "../../data-access-interface";
 import { UserCardEntity } from "../../entity";
+import { UserCardModel } from "./model";
 
 export class PostgreSqlUserCardDataAccess
 	implements UserCardDataAccessInterface
@@ -38,5 +43,50 @@ export class PostgreSqlUserCardDataAccess
 		}
 
 		return userCard;
+	}
+
+	async getUserCards(filter: GetUserCardsFilter): Promise<UserCardEntity[]> {
+		const pool = await this.database.getPool();
+
+		const queryParams: string[] = [];
+		let query = `
+			SELECT
+				uc.id,
+				uc.user_id,
+				uc.content,
+				uc.status,
+				uc.last_reviewed_at,
+				uc.created_at,
+				uc.updated_at
+			FROM
+				user_cards uc
+		`;
+
+		queryParams.push(filter.userId);
+		query += `
+			WHERE
+				uc.id = $${queryParams.length}
+		`;
+
+		const result: UserCardEntity[] = [];
+		const queryResult = await pool.query<UserCardModel>(query);
+
+		for (const row of queryResult.rows) {
+			result.push(
+				new UserCardEntity({
+					id: row.id,
+					userId: row.userId,
+					content: row.content,
+					status: row.status,
+					lastReviewedAt: row.lastReviewedAt
+						? moment(row.lastReviewedAt)
+						: null,
+					createdAt: moment(row.createdAt),
+					updatedAt: moment(row.updatedAt),
+				}),
+			);
+		}
+
+		return result;
 	}
 }
