@@ -5,6 +5,9 @@ import express, { Express } from "express";
 import logger from "pino-http";
 import { allowedOrigins } from "./lib/constant/origin";
 import { Jwt } from "./lib/jwt";
+import { UserCardController } from "./user-card/controller";
+import { PostgreSqlUserCardDataAccess } from "./user-card/data-access/postgresql";
+import { CreateUserCardUseCase } from "./user-card/use-case/create-user-card";
 import { UserController } from "./user/controller";
 import { PostgreSqlUserDataAccess } from "./user/data-access/postgresql";
 import { LoginUseCase } from "./user/use-case/login";
@@ -44,6 +47,15 @@ const userController = new UserController({
 	refreshTokenUseCase,
 });
 app.use("/user", userController.getRouter());
+
+const postgreSqlUserCardDataAccess = new PostgreSqlUserCardDataAccess();
+const createUserCardUseCase = new CreateUserCardUseCase(
+	postgreSqlUserCardDataAccess,
+);
+const userCardController = new UserCardController({
+	createUserCardUseCase,
+});
+app.use("/user-card", userCardController.getRouter());
 
 app.listen(port, () => {
 	console.log(`[server]: Server is running at http://localhost:${port}`);

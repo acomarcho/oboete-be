@@ -76,4 +76,8 @@ export class UserCardController {
 			},
 		);
 	}
+
+	getRouter() {
+		return this.router;
+	}
 }
