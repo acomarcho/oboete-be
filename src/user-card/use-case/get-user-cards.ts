@@ -3,7 +3,6 @@ import moment from "moment";
 import { HttpError } from "../../lib/error/http-error";
 import { UserDataAccessInterface } from "../../user/data-access-interface";
 import { UserCardDataAccessInterface } from "../data-access-interface";
-import { UserCardStatus } from "../entity";
 
 export class GetUserCardsUseCase {
 	private userCardDataAccess: UserCardDataAccessInterface;
