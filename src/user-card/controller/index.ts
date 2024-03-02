@@ -1,12 +1,13 @@
 import express from "express";
 import { StatusCodes } from "http-status-codes";
+import moment from "moment";
 import { HttpError } from "../../lib/error/http-error";
 import { HttpResponse } from "../../lib/response";
 import isAuthenticated from "../../middleware/auth";
 import { RequestWithUserId } from "../../types/express";
 import { CreateUserCardUseCase } from "../use-case/create-user-card";
 import { GetUserCardsUseCase } from "../use-case/get-user-cards";
-import { createUserCardSchema } from "./request";
+import { createUserCardSchema, getUserCardsSchema } from "./request";
 
 export class UserCardController {
 	private router;
@@ -40,7 +41,6 @@ export class UserCardController {
 					const { value: requestData, error } = createUserCardSchema.validate(
 						req.body,
 					);
-
 					if (error) {
 						throw new HttpError(StatusCodes.BAD_REQUEST, error.message);
 					}
@@ -92,8 +92,18 @@ export class UserCardController {
 						);
 					}
 
+					const { value: requestData, error } = getUserCardsSchema.validate(
+						req.query,
+					);
+					if (error) {
+						throw new HttpError(StatusCodes.BAD_REQUEST, error.message);
+					}
+
 					const userCards = await this.getUserCardsUseCase.execute({
 						userId: req.userId,
+						dueReviewAt: requestData.dueReviewAt
+							? moment(requestData.dueReviewAt)
+							: undefined,
 					});
 
 					return res.status(StatusCodes.OK).json(

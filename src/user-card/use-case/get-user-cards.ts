@@ -20,7 +20,10 @@ export class GetUserCardsUseCase {
 		this.userDataAccess = userDataAccess;
 	}
 
-	async execute({ userId }: { userId: string }) {
+	async execute({
+		userId,
+		dueReviewAt,
+	}: { userId: string; dueReviewAt?: moment.Moment }) {
 		const user = await this.userDataAccess.getUserById(userId);
 		if (user === null) {
 			throw new HttpError(StatusCodes.UNAUTHORIZED, "User not found");
@@ -28,6 +31,7 @@ export class GetUserCardsUseCase {
 
 		const userCards = await this.userCardDataAccess.getUserCards({
 			userId: userId,
+			dueReviewAt: dueReviewAt,
 		});
 
 		return userCards.map((userCard) => {
