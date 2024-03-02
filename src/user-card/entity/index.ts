@@ -2,10 +2,11 @@ import { Moment } from "moment";
 import { v4 as uuidv4 } from "uuid";
 
 export enum UserCardStatus {
-	ToReviewInOneDay = 0,
-	ToReviewInTwoDays = 1,
-	ToReviewInFourDays = 2,
-	ToReviewInOneWeek = 3,
+	ToReviewImmediately = 0,
+	ToReviewInOneDay = 1,
+	ToReviewInTwoDays = 2,
+	ToReviewInFourDays = 3,
+	ToReviewInOneWeek = 4,
 }
 
 export class UserCardEntity {

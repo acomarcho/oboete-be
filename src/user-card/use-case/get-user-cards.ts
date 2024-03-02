@@ -34,7 +34,13 @@ export class GetUserCardsUseCase {
 			const lastReviewedAt = userCard.getLastReviewedAt();
 			let dueReviewAt = moment();
 
-			if (userCard.getStatus() === UserCardStatus.ToReviewInOneDay) {
+			if (userCard.getStatus() === UserCardStatus.ToReviewImmediately) {
+				if (lastReviewedAt === null) {
+					dueReviewAt = userCard.getCreatedAt();
+				} else {
+					dueReviewAt = lastReviewedAt;
+				}
+			} else if (userCard.getStatus() === UserCardStatus.ToReviewInOneDay) {
 				if (lastReviewedAt === null) {
 					dueReviewAt = moment().add(1, "d");
 				} else {

@@ -36,7 +36,7 @@ export class CreateUserCardUseCase {
 			new UserCardEntity({
 				userId,
 				content,
-				status: UserCardStatus.ToReviewInOneDay,
+				status: UserCardStatus.ToReviewImmediately,
 				lastReviewedAt: null,
 				createdAt: moment(),
 				updatedAt: moment(),
