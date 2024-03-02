@@ -65,11 +65,11 @@ export class PostgreSqlUserCardDataAccess
 		queryParams.push(filter.userId);
 		query += `
 			WHERE
-				uc.id = $${queryParams.length}
+				uc.user_id = $${queryParams.length}
 		`;
 
 		const result: UserCardEntity[] = [];
-		const queryResult = await pool.query<UserCardModel>(query);
+		const queryResult = await pool.query<UserCardModel>(query, queryParams);
 
 		for (const row of queryResult.rows) {
 			result.push(

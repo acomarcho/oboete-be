@@ -5,18 +5,23 @@ import { HttpResponse } from "../../lib/response";
 import isAuthenticated from "../../middleware/auth";
 import { RequestWithUserId } from "../../types/express";
 import { CreateUserCardUseCase } from "../use-case/create-user-card";
+import { GetUserCardsUseCase } from "../use-case/get-user-cards";
 import { createUserCardSchema } from "./request";
 
 export class UserCardController {
 	private router;
 	private createUserCardUseCase;
+	private getUserCardsUseCase;
 
 	constructor({
 		createUserCardUseCase,
+		getUserCardsUseCase,
 	}: {
 		createUserCardUseCase: CreateUserCardUseCase;
+		getUserCardsUseCase: GetUserCardsUseCase;
 	}) {
 		this.createUserCardUseCase = createUserCardUseCase;
+		this.getUserCardsUseCase = getUserCardsUseCase;
 
 		this.router = express.Router();
 
@@ -28,7 +33,7 @@ export class UserCardController {
 					if (!req.userId) {
 						throw new HttpError(
 							StatusCodes.UNAUTHORIZED,
-							"You are not authenticated, cannot log out.",
+							"You are not authenticated.",
 						);
 					}
 
@@ -48,6 +53,53 @@ export class UserCardController {
 					return res.status(StatusCodes.OK).json(
 						new HttpResponse({
 							userCard: insertedUserCard,
+						}).toJson(),
+					);
+				} catch (error) {
+					if (error instanceof HttpError) {
+						console.log(error);
+						return res
+							.status(error.getStatusCode())
+							.json(
+								new HttpResponse(null, new Error(error.getMessage())).toJson(),
+							);
+					}
+					if (error instanceof Error) {
+						return res
+							.status(StatusCodes.INTERNAL_SERVER_ERROR)
+							.json(new HttpResponse(null, new Error(error.message)).toJson());
+					}
+					return res
+						.status(StatusCodes.INTERNAL_SERVER_ERROR)
+						.json(
+							new HttpResponse(
+								null,
+								new Error("Internal server error"),
+							).toJson(),
+						);
+				}
+			},
+		);
+
+		this.router.get(
+			"/",
+			isAuthenticated,
+			async (req: RequestWithUserId, res) => {
+				try {
+					if (!req.userId) {
+						throw new HttpError(
+							StatusCodes.UNAUTHORIZED,
+							"You are not authenticated.",
+						);
+					}
+
+					const userCards = await this.getUserCardsUseCase.execute({
+						userId: req.userId,
+					});
+
+					return res.status(StatusCodes.OK).json(
+						new HttpResponse({
+							userCards,
 						}).toJson(),
 					);
 				} catch (error) {
