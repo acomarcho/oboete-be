@@ -2,6 +2,7 @@ import express from "express";
 import { StatusCodes } from "http-status-codes";
 import moment from "moment";
 import { HttpError } from "../../lib/error/http-error";
+import { handleError } from "../../lib/http-helper/handle-error";
 import { HttpResponse } from "../../lib/response";
 import isAuthenticated from "../../middleware/auth";
 import { RequestWithUserId } from "../../types/express";
@@ -56,26 +57,7 @@ export class UserCardController {
 						}).toJson(),
 					);
 				} catch (error) {
-					if (error instanceof HttpError) {
-						return res
-							.status(error.getStatusCode())
-							.json(
-								new HttpResponse(null, new Error(error.getMessage())).toJson(),
-							);
-					}
-					if (error instanceof Error) {
-						return res
-							.status(StatusCodes.INTERNAL_SERVER_ERROR)
-							.json(new HttpResponse(null, new Error(error.message)).toJson());
-					}
-					return res
-						.status(StatusCodes.INTERNAL_SERVER_ERROR)
-						.json(
-							new HttpResponse(
-								null,
-								new Error("Internal server error"),
-							).toJson(),
-						);
+					return handleError(res, error);
 				}
 			},
 		);
@@ -112,26 +94,7 @@ export class UserCardController {
 						}).toJson(),
 					);
 				} catch (error) {
-					if (error instanceof HttpError) {
-						return res
-							.status(error.getStatusCode())
-							.json(
-								new HttpResponse(null, new Error(error.getMessage())).toJson(),
-							);
-					}
-					if (error instanceof Error) {
-						return res
-							.status(StatusCodes.INTERNAL_SERVER_ERROR)
-							.json(new HttpResponse(null, new Error(error.message)).toJson());
-					}
-					return res
-						.status(StatusCodes.INTERNAL_SERVER_ERROR)
-						.json(
-							new HttpResponse(
-								null,
-								new Error("Internal server error"),
-							).toJson(),
-						);
+					return handleError(res, error);
 				}
 			},
 		);
