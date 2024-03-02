@@ -57,7 +57,6 @@ export class UserCardController {
 					);
 				} catch (error) {
 					if (error instanceof HttpError) {
-						console.log(error);
 						return res
 							.status(error.getStatusCode())
 							.json(
@@ -104,7 +103,6 @@ export class UserCardController {
 					);
 				} catch (error) {
 					if (error instanceof HttpError) {
-						console.log(error);
 						return res
 							.status(error.getStatusCode())
 							.json(

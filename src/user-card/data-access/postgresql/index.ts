@@ -4,7 +4,7 @@ import {
 	GetUserCardsFilter,
 	UserCardDataAccessInterface,
 } from "../../data-access-interface";
-import { UserCardEntity } from "../../entity";
+import { UserCardEntity, UserCardStatus } from "../../entity";
 import { UserCardModel } from "./model";
 
 export class PostgreSqlUserCardDataAccess
@@ -48,7 +48,7 @@ export class PostgreSqlUserCardDataAccess
 	async getUserCards(filter: GetUserCardsFilter): Promise<UserCardEntity[]> {
 		const pool = await this.database.getPool();
 
-		const queryParams: string[] = [];
+		const queryParams: (string | moment.Moment)[] = [];
 		let query = `
 			SELECT
 				uc.id,
@@ -68,6 +68,42 @@ export class PostgreSqlUserCardDataAccess
 				uc.user_id = $${queryParams.length}
 		`;
 
+		if (filter.dueReviewAt) {
+			queryParams.push(filter.dueReviewAt);
+
+			query += `
+				AND
+					(uc.last_reviewed_at is null)
+				OR
+					(
+						(
+							uc.status = ${UserCardStatus.ToReviewImmediately}
+							AND uc.last_reviewed_at < $${queryParams.length}
+						)
+						OR
+						(
+							uc.status = ${UserCardStatus.ToReviewInOneDay}
+							AND uc.last_reviewed_at + interval '1 day' < $${queryParams.length}
+						)
+						OR
+						(
+							uc.status = ${UserCardStatus.ToReviewInTwoDays}
+							AND uc.last_reviewed_at + interval '2 days' < $${queryParams.length}
+						)
+						OR
+						(
+							uc.status = ${UserCardStatus.ToReviewInFourDays}
+							AND uc.last_reviewed_at + interval '4 days' < $${queryParams.length}
+						)
+						OR
+						(
+							uc.status = ${UserCardStatus.ToReviewInOneWeek}
+							AND uc.last_reviewed_at + interval '7 days' < $${queryParams.length}
+						)
+					)
+			`;
+		}
+
 		const result: UserCardEntity[] = [];
 		const queryResult = await pool.query<UserCardModel>(query, queryParams);
 
@@ -75,14 +111,14 @@ export class PostgreSqlUserCardDataAccess
 			result.push(
 				new UserCardEntity({
 					id: row.id,
-					userId: row.userId,
+					userId: row.user_id,
 					content: row.content,
 					status: row.status,
-					lastReviewedAt: row.lastReviewedAt
-						? moment(row.lastReviewedAt)
+					lastReviewedAt: row.last_reviewed_at
+						? moment(row.last_reviewed_at)
 						: null,
-					createdAt: moment(row.createdAt),
-					updatedAt: moment(row.updatedAt),
+					createdAt: moment(row.created_at),
+					updatedAt: moment(row.updated_at),
 				}),
 			);
 		}

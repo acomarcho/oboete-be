@@ -1,11 +1,9 @@
-import { UserCardStatus } from "../../entity";
-
 export type UserCardModel = {
 	id: string;
-	userId: string;
+	user_id: string;
 	content: string;
 	status: number;
-	lastReviewedAt: string | null;
-	createdAt: string;
-	updatedAt: string;
+	last_reviewed_at: Date | null;
+	created_at: Date;
+	updated_at: Date;
 };

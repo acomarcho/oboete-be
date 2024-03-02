@@ -62,7 +62,6 @@ export class UserController {
 				);
 			} catch (error) {
 				if (error instanceof HttpError) {
-					console.log(error);
 					return res
 						.status(error.getStatusCode())
 						.json(
@@ -118,7 +117,6 @@ export class UserController {
 				);
 			} catch (error) {
 				if (error instanceof HttpError) {
-					console.log(error);
 					return res
 						.status(error.getStatusCode())
 						.json(
@@ -164,7 +162,6 @@ export class UserController {
 					);
 				} catch (error) {
 					if (error instanceof HttpError) {
-						console.log(error);
 						return res
 							.status(error.getStatusCode())
 							.json(
@@ -210,7 +207,6 @@ export class UserController {
 				);
 			} catch (error) {
 				if (error instanceof HttpError) {
-					console.log(error);
 					return res
 						.status(error.getStatusCode())
 						.json(
