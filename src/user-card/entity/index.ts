@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Moment } from "moment";
 import { v4 as uuidv4 } from "uuid";
 
@@ -70,5 +71,44 @@ export class UserCardEntity {
 
 	getUpdatedAt() {
 		return this.updatedAt;
+	}
+
+	getDueReviewAt() {
+		const lastReviewedAt = this.getLastReviewedAt();
+		let dueReviewAt = moment();
+
+		if (this.getStatus() === UserCardStatus.ToReviewImmediately) {
+			if (lastReviewedAt === null) {
+				dueReviewAt = this.getCreatedAt();
+			} else {
+				dueReviewAt = lastReviewedAt;
+			}
+		} else if (this.getStatus() === UserCardStatus.ToReviewInOneDay) {
+			if (lastReviewedAt === null) {
+				dueReviewAt = moment().add(1, "d");
+			} else {
+				dueReviewAt = lastReviewedAt.add(1, "d");
+			}
+		} else if (this.getStatus() === UserCardStatus.ToReviewInTwoDays) {
+			if (lastReviewedAt === null) {
+				dueReviewAt = moment().add(2, "d");
+			} else {
+				dueReviewAt = lastReviewedAt.add(2, "d");
+			}
+		} else if (this.getStatus() === UserCardStatus.ToReviewInFourDays) {
+			if (lastReviewedAt === null) {
+				dueReviewAt = moment().add(4, "d");
+			} else {
+				dueReviewAt = lastReviewedAt.add(4, "d");
+			}
+		} else if (this.getStatus() === UserCardStatus.ToReviewInOneWeek) {
+			if (lastReviewedAt === null) {
+				dueReviewAt = moment().add(7, "d");
+			} else {
+				dueReviewAt = lastReviewedAt.add(7, "d");
+			}
+		}
+
+		return dueReviewAt;
 	}
 }

@@ -31,48 +31,13 @@ export class GetUserCardsUseCase {
 		});
 
 		return userCards.map((userCard) => {
-			const lastReviewedAt = userCard.getLastReviewedAt();
-			let dueReviewAt = moment();
-
-			if (userCard.getStatus() === UserCardStatus.ToReviewImmediately) {
-				if (lastReviewedAt === null) {
-					dueReviewAt = userCard.getCreatedAt();
-				} else {
-					dueReviewAt = lastReviewedAt;
-				}
-			} else if (userCard.getStatus() === UserCardStatus.ToReviewInOneDay) {
-				if (lastReviewedAt === null) {
-					dueReviewAt = moment().add(1, "d");
-				} else {
-					dueReviewAt = lastReviewedAt.add(1, "d");
-				}
-			} else if (userCard.getStatus() === UserCardStatus.ToReviewInTwoDays) {
-				if (lastReviewedAt === null) {
-					dueReviewAt = moment().add(2, "d");
-				} else {
-					dueReviewAt = lastReviewedAt.add(2, "d");
-				}
-			} else if (userCard.getStatus() === UserCardStatus.ToReviewInFourDays) {
-				if (lastReviewedAt === null) {
-					dueReviewAt = moment().add(4, "d");
-				} else {
-					dueReviewAt = lastReviewedAt.add(4, "d");
-				}
-			} else if (userCard.getStatus() === UserCardStatus.ToReviewInOneWeek) {
-				if (lastReviewedAt === null) {
-					dueReviewAt = moment().add(7, "d");
-				} else {
-					dueReviewAt = lastReviewedAt.add(7, "d");
-				}
-			}
-
 			return {
 				id: userCard.getId(),
 				content: userCard.getContent(),
 				status: userCard.getStatus(),
 				createdAt: userCard.getCreatedAt(),
 				updatedAt: userCard.getUpdatedAt(),
-				dueReviewAt: dueReviewAt,
+				dueReviewAt: userCard.getDueReviewAt(),
 			};
 		});
 	}
