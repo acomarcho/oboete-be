@@ -9,6 +9,7 @@ import { UserCardController } from "./user-card/controller";
 import { PostgreSqlUserCardDataAccess } from "./user-card/data-access/postgresql";
 import { CreateUserCardUseCase } from "./user-card/use-case/create-user-card";
 import { GetUserCardsUseCase } from "./user-card/use-case/get-user-cards";
+import { ReviewUserCardUseCase } from "./user-card/use-case/review-user-card";
 import { UserController } from "./user/controller";
 import { PostgreSqlUserDataAccess } from "./user/data-access/postgresql";
 import { LoginUseCase } from "./user/use-case/login";
@@ -58,9 +59,14 @@ const getUserCardsUseCase = new GetUserCardsUseCase({
 	userCardDataAccess: postgreSqlUserCardDataAccess,
 	userDataAccess: postgreSqlUserDataAccess,
 });
+const reviewUserCardUseCase = new ReviewUserCardUseCase({
+	userCardDataAccess: postgreSqlUserCardDataAccess,
+	userDataAccess: postgreSqlUserDataAccess,
+});
 const userCardController = new UserCardController({
 	createUserCardUseCase,
 	getUserCardsUseCase,
+	reviewUserCardUseCase,
 });
 app.use("/user-card", userCardController.getRouter());
 
