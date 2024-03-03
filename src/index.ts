@@ -5,6 +5,7 @@ import express, { Express } from "express";
 import logger from "pino-http";
 import { allowedOrigins } from "./lib/constant/origin";
 import { Jwt } from "./lib/jwt";
+import { PostgreSqlDatabase } from "./lib/postgresql";
 import { UserCardController } from "./user-card/controller";
 import { PostgreSqlUserCardDataAccess } from "./user-card/data-access/postgresql";
 import { CreateUserCardUseCase } from "./user-card/use-case/create-user-card";
@@ -33,8 +34,11 @@ app.use(
 const port = process.env.PORT || 3000;
 
 const jwt = new Jwt();
+const postgreSqlDatabase = new PostgreSqlDatabase();
 
-const postgreSqlUserDataAccess = new PostgreSqlUserDataAccess();
+const postgreSqlUserDataAccess = new PostgreSqlUserDataAccess(
+	postgreSqlDatabase,
+);
 const registerUseCase = new RegisterUseCase(postgreSqlUserDataAccess);
 const loginUseCase = new LoginUseCase(postgreSqlUserDataAccess, jwt);
 const logoutUseCase = new LogOutUseCase(postgreSqlUserDataAccess);
@@ -50,7 +54,9 @@ const userController = new UserController({
 });
 app.use("/user", userController.getRouter());
 
-const postgreSqlUserCardDataAccess = new PostgreSqlUserCardDataAccess();
+const postgreSqlUserCardDataAccess = new PostgreSqlUserCardDataAccess(
+	postgreSqlDatabase,
+);
 const createUserCardUseCase = new CreateUserCardUseCase({
 	userCardDataAccess: postgreSqlUserCardDataAccess,
 	userDataAccess: postgreSqlUserDataAccess,

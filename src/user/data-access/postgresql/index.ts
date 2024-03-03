@@ -1,10 +1,14 @@
-import { postgreSqlDatabase } from "../../../lib/postgresql";
+import { PostgreSqlDatabase } from "../../../lib/postgresql";
 import { UserDataAccessInterface } from "../../data-access-interface";
 import { UserEntity } from "../../entity";
 import { UserModel } from "./model";
 
 export class PostgreSqlUserDataAccess implements UserDataAccessInterface {
-	private database = postgreSqlDatabase;
+	private database: PostgreSqlDatabase;
+
+	constructor(database: PostgreSqlDatabase) {
+		this.database = database;
+	}
 
 	public async insertUser(user: UserEntity): Promise<UserEntity> {
 		const client = await this.database.getClient();

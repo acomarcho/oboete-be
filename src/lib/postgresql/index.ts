@@ -1,10 +1,10 @@
-import { Pool } from "pg";
+import { Pool, PoolConfig } from "pg";
 
-class PostgreSqlDatabase {
+export class PostgreSqlDatabase {
 	private pool: Pool;
 
-	constructor() {
-		this.pool = new Pool();
+	constructor(config?: PoolConfig) {
+		this.pool = new Pool(config);
 	}
 
 	async getPool() {
@@ -15,5 +15,3 @@ class PostgreSqlDatabase {
 		return await this.pool.connect();
 	}
 }
-
-export const postgreSqlDatabase = new PostgreSqlDatabase();

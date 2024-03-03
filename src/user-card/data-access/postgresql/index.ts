@@ -1,5 +1,5 @@
 import moment from "moment";
-import { postgreSqlDatabase } from "../../../lib/postgresql";
+import { PostgreSqlDatabase } from "../../../lib/postgresql";
 import {
 	GetUserCardsFilter,
 	UserCardDataAccessInterface,
@@ -10,7 +10,11 @@ import { UserCardModel } from "./model";
 export class PostgreSqlUserCardDataAccess
 	implements UserCardDataAccessInterface
 {
-	private database = postgreSqlDatabase;
+	private database: PostgreSqlDatabase;
+
+	constructor(database: PostgreSqlDatabase) {
+		this.database = database;
+	}
 
 	async insertUserCard(userCard: UserCardEntity): Promise<UserCardEntity> {
 		const client = await this.database.getClient();
