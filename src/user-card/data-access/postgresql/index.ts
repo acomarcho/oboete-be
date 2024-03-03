@@ -174,4 +174,43 @@ export class PostgreSqlUserCardDataAccess
 
 		return userCard;
 	}
+
+	async getUserCardById(userCardId: string): Promise<UserCardEntity | null> {
+		const pool = await this.database.getPool();
+
+		const returnedRows = await pool.query<UserCardModel>(
+			`
+			SELECT
+				uc.id,
+				uc.user_id,
+				uc.content,
+				uc.status,
+				uc.last_reviewed_at,
+				uc.created_at,
+				uc.updated_at
+			FROM
+				user_cards uc
+			WHERE
+				uc.id = $1
+		`,
+			[userCardId],
+		);
+
+		if (returnedRows.rowCount === 0) {
+			return null;
+		}
+
+		const row = returnedRows.rows[0];
+		return new UserCardEntity({
+			id: row.id,
+			userId: row.user_id,
+			content: row.content,
+			status: row.status,
+			lastReviewedAt: row.last_reviewed_at
+				? moment(row.last_reviewed_at)
+				: null,
+			createdAt: moment(row.created_at),
+			updatedAt: moment(row.updated_at),
+		});
+	}
 }
