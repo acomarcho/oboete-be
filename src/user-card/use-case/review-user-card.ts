@@ -65,7 +65,7 @@ export class ReviewUserCardUseCase {
 		} else if (statusChange === 0) {
 			targetStatus = userCard.getStatus();
 		} else {
-			targetStatus = Math.max(
+			targetStatus = Math.min(
 				userCard.getStatus() + 1,
 				UserCardStatus.ToReviewInOneWeek,
 			);
