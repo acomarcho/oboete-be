@@ -43,6 +43,22 @@ export class ReviewUserCardUseCase {
 			);
 		}
 
+		const updatedUserCard = new UserCardEntity({
+			id: userCard.getId(),
+			userId: userCard.getUserId(),
+			content: userCard.getContent(),
+			status: this.getTargetStatus(userCard, statusChange),
+			lastReviewedAt: moment(),
+			createdAt: userCard.getCreatedAt(),
+			updatedAt: userCard.getUpdatedAt(),
+		});
+
+		await this.userCardDataAccess.updateUserCard(updatedUserCard);
+
+		return updatedUserCard;
+	}
+
+	getTargetStatus(userCard: UserCardEntity, statusChange: number) {
 		let targetStatus: number;
 		if (statusChange === -1) {
 			targetStatus = UserCardStatus.ToReviewImmediately;
@@ -55,18 +71,6 @@ export class ReviewUserCardUseCase {
 			);
 		}
 
-		const updatedUserCard = new UserCardEntity({
-			id: userCard.getId(),
-			userId: userCard.getUserId(),
-			content: userCard.getContent(),
-			status: targetStatus,
-			lastReviewedAt: moment(),
-			createdAt: userCard.getCreatedAt(),
-			updatedAt: userCard.getUpdatedAt(),
-		});
-
-		await this.userCardDataAccess.updateUserCard(updatedUserCard);
-
-		return updatedUserCard;
+		return targetStatus;
 	}
 }
