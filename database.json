@@ -1,19 +1,27 @@
 {
-  "dev": {
-    "driver": "pg",
-    "user": "postgres",
-    "password": "",
-    "host": "localhost",
-    "database": "oboete",
-    "port": "5432"
-  },
-  "prod": {
-    "driver": "pg",
-    "user": "postgres",
-    "password": "",
-    "host": "localhost",
-    "database": "oboete",
-    "port": "5432"
-  },
-  "sql-file": true
+	"test": {
+		"driver": "pg",
+		"user": "postgres",
+		"password": "",
+		"host": "localhost",
+		"database": "oboete_test",
+		"port": "5432"
+	},
+	"dev": {
+		"driver": "pg",
+		"user": "postgres",
+		"password": "",
+		"host": "localhost",
+		"database": "oboete",
+		"port": "5432"
+	},
+	"prod": {
+		"driver": "pg",
+		"user": "postgres",
+		"password": "",
+		"host": "localhost",
+		"database": "oboete",
+		"port": "5432"
+	},
+	"sql-file": true
 }
