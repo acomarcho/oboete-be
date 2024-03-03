@@ -8,4 +8,5 @@ export type GetUserCardsFilter = {
 export interface UserCardDataAccessInterface {
 	insertUserCard(userCard: UserCardEntity): Promise<UserCardEntity>;
 	getUserCards(filter: GetUserCardsFilter): Promise<UserCardEntity[]>;
+	updateUserCard(userCard: UserCardEntity): Promise<UserCardEntity>;
 }

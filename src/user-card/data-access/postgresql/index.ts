@@ -139,4 +139,39 @@ export class PostgreSqlUserCardDataAccess
 
 		return result;
 	}
+
+	async updateUserCard(userCard: UserCardEntity): Promise<UserCardEntity> {
+		const client = await this.database.getClient();
+		try {
+			await client.query("BEGIN");
+
+			await client.query(
+				`UPDATE 
+					user_cards
+				SET
+					content = $1,
+					status = $2,
+					last_reviewed_at = $3,
+					updated_at = $4
+        WHERE
+					id = $5`,
+				[
+					userCard.getContent(),
+					userCard.getStatus(),
+					userCard.getLastReviewedAt(),
+					userCard.getUpdatedAt(),
+					userCard.getId(),
+				],
+			);
+
+			await client.query("COMMIT");
+		} catch (error) {
+			await client.query("ROLLBACK");
+			throw error;
+		} finally {
+			client.release();
+		}
+
+		return userCard;
+	}
 }
