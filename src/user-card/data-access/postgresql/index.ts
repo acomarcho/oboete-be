@@ -108,11 +108,11 @@ export class PostgreSqlUserCardDataAccess
 			query += `
 				ORDER BY
 						CASE
-							WHEN uc.status = ${UserCardStatus.ToReviewImmediately} THEN COALESCE(uc.last_reviewed_at, now())
-							WHEN uc.status = ${UserCardStatus.ToReviewInOneDay} THEN COALESCE(uc.last_reviewed_at, now()) + interval '1 day'
-							WHEN uc.status = ${UserCardStatus.ToReviewInTwoDays} THEN COALESCE(uc.last_reviewed_at, now()) + interval '2 days'
-							WHEN uc.status = ${UserCardStatus.ToReviewInFourDays} THEN COALESCE(uc.last_reviewed_at, now()) + interval '4 days'
-							WHEN uc.status = ${UserCardStatus.ToReviewInOneWeek} THEN COALESCE(uc.last_reviewed_at, now()) + interval '7 days'
+							WHEN uc.status = ${UserCardStatus.ToReviewImmediately} THEN COALESCE(uc.last_reviewed_at, uc.created_at)
+							WHEN uc.status = ${UserCardStatus.ToReviewInOneDay} THEN COALESCE(uc.last_reviewed_at, uc.created_at) + interval '1 day'
+							WHEN uc.status = ${UserCardStatus.ToReviewInTwoDays} THEN COALESCE(uc.last_reviewed_at, uc.created_at) + interval '2 days'
+							WHEN uc.status = ${UserCardStatus.ToReviewInFourDays} THEN COALESCE(uc.last_reviewed_at, uc.created_at) + interval '4 days'
+							WHEN uc.status = ${UserCardStatus.ToReviewInOneWeek} THEN COALESCE(uc.last_reviewed_at, uc.created_at) + interval '7 days'
 						END
 				ASC
 			`;
