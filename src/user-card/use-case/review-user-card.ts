@@ -36,7 +36,7 @@ export class ReviewUserCardUseCase {
 			throw new HttpError(StatusCodes.BAD_REQUEST, "User card not found");
 		}
 
-		if (userCard.getUserId() !== userId) {
+		if (userCard.getUserId() !== user.getId()) {
 			throw new HttpError(
 				StatusCodes.UNAUTHORIZED,
 				"Unauthorized access to user card",
